@@ -36,13 +36,7 @@ jobs:
         echo "Your Proxy is available at: http://$IP:$PORT"
         echo "PROXY_URL=http://$IP:$PORT" >> $GITHUB_ENV  # Proxy URL'sini environment değişkeni olarak ayarla
 
-    - name: Continuous Loop (Keeps Job Running)
-      run: |
-        while true; do
-          echo "Proxy is running at http://$IP:$PORT"
-          sleep 3600  # 1 saat bekle
-        done
-
     - name: Display Proxy URL
       run: |
         echo "Proxy URL: $PROXY_URL"  # Proxy URL'yi çıktı olarak göster
+
