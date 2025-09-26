@@ -40,3 +40,9 @@ jobs:
       run: |
         echo "Proxy URL: $PROXY_URL"  # Proxy URL'yi çıktı olarak göster
 
+    - name: Keep Proxy Running (Loop)
+      run: |
+        # Proxy'nin sürekli çalışması için döngü ekleyelim
+        while true; do
+          sleep 3600  # Her saat başı proxy'yi kontrol et, fakat durdurma yok
+        done
