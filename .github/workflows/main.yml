@@ -34,8 +34,15 @@ jobs:
         IP=$(hostname -I | awk '{print $1}')
         PORT=3128  # Proxy portu, Squid tarafından belirlenen port
         echo "Your Proxy is available at: http://$IP:$PORT"
-        echo "::set-output name=proxy_url::http://$IP:$PORT"  # GitHub Actions output olarak proxy URL'si
+        echo "PROXY_URL=http://$IP:$PORT" >> $GITHUB_ENV  # Proxy URL'sini environment değişkeni olarak ayarla
+
+    - name: Continuous Loop (Keeps Job Running)
+      run: |
+        while true; do
+          echo "Proxy is running at http://$IP:$PORT"
+          sleep 3600  # 1 saat bekle
+        done
 
     - name: Display Proxy URL
       run: |
-        echo "Proxy URL: ${{ steps.get_machine_ip.outputs.proxy_url }}"  # Proxy URL'yi çıktı olarak göster
+        echo "Proxy URL: $PROXY_URL"  # Proxy URL'yi çıktı olarak göster
