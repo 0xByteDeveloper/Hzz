@@ -1,0 +1,41 @@
+name: Proxy Server Setup on Ubuntu
+
+on:
+  push:
+    branches:
+      - main  # Ana dalda push olduğunda başlar
+
+jobs:
+  setup-proxy:
+    runs-on: ubuntu-latest  # GitHub otomatik olarak Ubuntu ortamı sağlar
+
+    timeout-minutes: 4320  # 3 gün boyunca çalışmasını sağlar (max süre 72 saat)
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Install Squid Proxy Server
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y squid  # Squid proxy sunucusunu yükle
+
+    - name: Configure Squid Proxy Server
+      run: |
+        # Proxy konfigürasyon dosyasını değiştir
+        sudo cp /etc/squid/squid.conf /etc/squid/squid.conf.bak  # Yedek al
+        sudo bash -c 'echo "http_port 3128" > /etc/squid/squid.conf'  # Port 3128 olarak ayarla
+        sudo bash -c 'echo "http_access allow all" >> /etc/squid/squid.conf'  # Herkese izin ver
+        sudo systemctl restart squid  # Squid servisini yeniden başlat
+
+    - name: Get Machine's IP Address and Proxy Info
+      run: |
+        # Ubuntu'nun IP adresini al
+        IP=$(hostname -I | awk '{print $1}')
+        PORT=3128  # Proxy portu, Squid tarafından belirlenen port
+        echo "Your Proxy is available at: http://$IP:$PORT"
+        echo "::set-output name=proxy_url::http://$IP:$PORT"  # GitHub Actions output olarak proxy URL'si
+
+    - name: Display Proxy URL
+      run: |
+        echo "Proxy URL: ${{ steps.get_machine_ip.outputs.proxy_url }}"  # Proxy URL'yi çıktı olarak göster
